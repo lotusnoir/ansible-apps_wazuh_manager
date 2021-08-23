@@ -1,0 +1,32 @@
+---
+- name: "Install requierements"
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - apt-transport-https
+    - lsb-release
+    - gnupg2
+
+- name: "Add wazuh apt signing key"
+  apt_key:
+    url: https://packages.wazuh.com/key/GPG-KEY-WAZUH
+    state: present
+
+- name: "Add wazuh repo to apt list"
+  apt_repository:
+    repo: deb https://packages.wazuh.com/4.x/apt/ stable main
+    state: present
+    filename: wazuh
+
+- name: "Install wazuh-manager"
+  package:
+    name: wazuh-manager
+    state: present
+    update_cache: true
+
+- name: "Start wazuh-manager services"
+  service:
+    name: wazuh-manager
+    state: started
+    enabled: true
